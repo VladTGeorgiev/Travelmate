@@ -12,17 +12,14 @@ data_hash = JSON.parse(file)
 
 data_hash.each do |everything|
     everything[1].each do |city|
-        city.each do |elem|
             City.create(
                 name: city['name']
             )
-        end
     end
 end
 
 data_hash.each do |everything|
     everything[1].each do |city|
-
         city['landmarks'].each do |landmark|
             Landmark.create(            
             city_id: city['id'],
