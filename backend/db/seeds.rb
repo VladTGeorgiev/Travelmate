@@ -11,14 +11,27 @@ file = File.read('data.json')
 data_hash = JSON.parse(file)
 
 data_hash.each do |everything|
-    everything.each do |city|
-        puts city[0]['landmarks']
-        test = city[0]['landmarks']
+    everything[1].each do |city|
+            City.create(
+                name: city['name']
+            )
+    end
+end
 
-        # test.each do |landmark|
-        # Landmark.create(
-        #     name: landmark['name']
-        # )
-        # end
+data_hash.each do |everything|
+    everything[1].each do |city|
+        city['landmarks'].each do |landmark|
+            Landmark.create(            
+            city_id: city['id'],
+            formatted_address: landmark['formatted_address'],
+            longitude: landmark['geometry']['location']['lat'],
+            latitude: landmark['geometry']['location']['lng'],
+            name: landmark['name'],
+            # photos: landmark['photos'][0]['html_attributions'],
+            rating: landmark['rating'],
+            types: landmark['types'],
+            user_ratings_total: landmark['user_ratings_total']
+            )
+        end
     end
 end

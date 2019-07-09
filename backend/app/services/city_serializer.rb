@@ -6,7 +6,7 @@ class CitySerializer
 
     def to_serialized_json
         @city.to_json(:include => {
-        :landmarks => {:only => [:id, :formatted_address, :name, :photos, :longitude, :latitude, :rating, :type, :user_ratings_total,  :city_id]}, :comments => {:only => [:id, :description, :landmark_id]}}, :except => [:created_at, :updated_at])
+        :landmarks => {:only => [:id, :formatted_address, :name, :photos, :longitude, :latitude, :rating, :types, :user_ratings_total,  :city_id]}, :comments => {:only => [:id, :description, :landmark_id]}}, :except => [:created_at, :updated_at])
     end
     
 end

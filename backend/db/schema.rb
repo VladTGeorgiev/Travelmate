@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_09_143858) do
+ActiveRecord::Schema.define(version: 2019_07_09_183406) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -33,11 +33,11 @@ ActiveRecord::Schema.define(version: 2019_07_09_143858) do
     t.float "longitude"
     t.float "latitude"
     t.float "rating"
-    t.string "type"
     t.integer "user_ratings_total"
     t.integer "city_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "types"
     t.index ["city_id"], name: "index_landmarks_on_city_id"
   end
 
