@@ -56,21 +56,56 @@ function changeContent(event) {
 
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
-
-    const landmarkDescription = document.createElement("textarea")
-    
-    landmarkDetails.append(landmarkDescription)
+    const landmarkData = event.target.dataset.id
 
     initMap(landmarkLatitudeValue, landmarkLongitudeValue)
 
+    createNewCommentForm(event, landmarkData)
     fetchComments(event)
-}
+
+};
+
+function createNewCommentForm(landmarkData) {
+    const div = document.createElement("div")
+    div.className = "new-comment-div"
+
+    const textarea = document.createElement("textarea")
+    textarea.placeholder = "Enter your comment here"
+    textarea.className = "new-comment"
+    textarea.autofocus = true
+
+    const buttonCreate = document.createElement("button")
+    buttonCreate.className = "btn btn-success"
+    buttonCreate.innerText = "Create Comment"
+    buttonCreate.addEventListener("click", event => createComment(event, landmarkData))
+
+    landmarkDetails.append(textarea, buttonCreate)
+
+    return landmarkDetails
+};
+
+function createComment(event, landmarkData) {
+    const newComment = document.querySelector('.new-comment')
+
+    const newContent = {
+        "description": newComment.value,
+        "landmark_id": landmarkData.target.dataset.id
+    };
+
+    fetch(commentsURL, {
+        method: "POST",
+        body: JSON.stringify(newContent),
+        headers: {
+          "Content-Type": "application/json"
+        }
+    }).then(resp => resp.json()).then(newCommentData => addComment(newCommentData))
+
+};
 
 function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
 
     let latNum = parseFloat(landmarkLatitudeValue);
     let lngNum = parseFloat(landmarkLongitudeValue);
-    console.log(latNum, lngNum)
 
     let currentLandmark = {lat: latNum, lng: lngNum};
 
@@ -82,15 +117,14 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
 }
 
 function fetchComments(event) {
-
     fetch(`${landmarksURL}/${event.target.dataset.id}`)
-
         .then(landmarkData => landmarkData.json())
         .then(landmark => displayComments(landmark, event))
 };
 
 function displayComments(landmark, event) {
     const commentsList = document.querySelector(".comment-body")
+
     commentsList.innerHTML = ""
     const comments = landmark["comments"]
     comments.map(comment => {
@@ -102,6 +136,7 @@ function addComment(comment) {
     const commentsList = document.querySelector(".comment-body")
     const div = createCommentView(comment)
     commentsList.appendChild(div)
+
 };
 
 function createCommentView(comment) {
@@ -119,6 +154,7 @@ function createCommentView(comment) {
     buttonEdit.innerText = "Edit Comment"
     buttonEdit.addEventListener("click", event => updateComment(event, comment))
 
+
     const buttonDelete = document.createElement("button")
     buttonDelete.id = comment.id
     buttonDelete.className = "btn btn-danger"
@@ -131,7 +167,7 @@ function createCommentView(comment) {
 };
 
 function updateComment(event, comment) {
-
+debugger
     const domNode = document.querySelector(`div[data-id="${comment.id}"`).firstElementChild
 
     const editedContent = {
@@ -144,7 +180,7 @@ function updateComment(event, comment) {
         headers: {
           "Content-Type": "application/json"
         }
-    }).then(quote => quote.json()).then(console.log)
+    }).then(quote => quote.json())
 };
 
 function deleteComment(event, comment) {
