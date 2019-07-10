@@ -52,8 +52,14 @@ function showLandmarkCard(city) {
 
 function changeContent(event) {
 
+    landmarkDetails.innerHTML = " "
+
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
+
+    const landmarkDescription = document.createElement("textarea")
+    
+    landmarkDetails.append(landmarkDescription)
 
     initMap(landmarkLatitudeValue, landmarkLongitudeValue)
 
