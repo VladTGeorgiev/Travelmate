@@ -27,7 +27,7 @@ data_hash.each do |everything|
             longitude: landmark['geometry']['location']['lng'],
             latitude: landmark['geometry']['location']['lat'],
             name: landmark['name'],
-            # photos: landmark['photos'][0]['html_attributions'],
+            # photos: landmark['photos'][0]['html_attributions'][0],
             rating: landmark['rating'],
             types: landmark['types'],
             user_ratings_total: landmark['user_ratings_total']
@@ -35,3 +35,16 @@ data_hash.each do |everything|
         end
     end
 end
+
+comments = [
+    {description: "What is Lorem Ipsum?
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ", landmark_id: 1 },
+    {description: "What is Lorem Ipsum?
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ", landmark_id: 2 },
+    {description: "What is Lorem Ipsum?
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ", landmark_id: 1 },
+    {description: "What is Lorem Ipsum?
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ", landmark_id: 3 }
+  ]
+  
+  comments.each {|comment| Comment.create(comment)}
