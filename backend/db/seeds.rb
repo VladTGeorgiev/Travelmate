@@ -24,8 +24,8 @@ data_hash.each do |everything|
             Landmark.create(            
             city_id: city['id'],
             formatted_address: landmark['formatted_address'],
-            longitude: landmark['geometry']['location']['lat'],
-            latitude: landmark['geometry']['location']['lng'],
+            longitude: landmark['geometry']['location']['lng'],
+            latitude: landmark['geometry']['location']['lat'],
             name: landmark['name'],
             # photos: landmark['photos'][0]['html_attributions'],
             rating: landmark['rating'],

@@ -1,6 +1,7 @@
 const citiesURL = "http://localhost:3000/cities"
 const cityBar = document.querySelector("#list-group")
 const landmarkCard = document.querySelector("#location-detail")
+const landmarkDetails = document.querySelector("#inner-details")
 const getMap = document.querySelector("#map")
 
 fetch (citiesURL)
