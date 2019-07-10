@@ -1,6 +1,7 @@
 const citiesURL = "http://localhost:3000/cities"
 const commentsURL = "http://localhost:3000/comments"
 const landmarksURL = "http://localhost:3000/landmarks"
+const usersURL = "http://localhost:3000/users"
 const cityBar = document.querySelector("#list-group")
 const landmarkCard = document.querySelector("#location-detail")
 const landmarkDetails = document.querySelector("#inner-details")
@@ -13,6 +14,47 @@ fetch (citiesURL)
             showCitySideBar(city)
     })
 })
+
+document.addEventListener("DOMContentLoaded", function () {
+    createUserButton()
+});
+
+function createUserButton() {
+    const userplace = document.querySelector('.user')
+    const div = document.createElement("div")
+    div.className = "new-user-div"
+
+    const input = document.createElement("input")
+    input.placeholder = "Enter your user name here"
+    input.className = "new-user"
+    input.autofocus = true
+
+    const buttonCreate = document.createElement("button")
+    buttonCreate.className = "btn btn-success"
+    buttonCreate.innerText = "Create user"
+    buttonCreate.addEventListener("click", event => createUser(event))
+
+    div.append(input, buttonCreate)
+    userplace.appendChild(div)
+
+    return userplace
+};
+
+function createUser(event) {
+    const newUser = document.querySelector('.new-user')
+
+    const newUserName = {
+        "username": newUser.value,
+    };
+// debugger
+    fetch(usersURL, {
+        method: "POST",
+        body: JSON.stringify(newUserName),
+        headers: {
+          "Content-Type": "application/json"
+        }
+    }).then(resp => resp.json()).then(data => console.log(data))
+};
 
 function showCitySideBar(city) {
     const cityName = document.createElement("li")
@@ -89,6 +131,7 @@ function createComment(event, landmarkData) {
 
     const newContent = {
         "description": newComment.value,
+        // "user_id": ,
         "landmark_id": landmarkData.target.dataset.id
     };
 
@@ -153,7 +196,7 @@ function createCommentView(comment) {
     buttonEdit.className = "btn btn-info"
     buttonEdit.innerText = "Edit Comment"
     buttonEdit.addEventListener("click", event => updateComment(event, comment))
-
+// debugger
 
     const buttonDelete = document.createElement("button")
     buttonDelete.id = comment.id
@@ -167,7 +210,7 @@ function createCommentView(comment) {
 };
 
 function updateComment(event, comment) {
-debugger
+
     const domNode = document.querySelector(`div[data-id="${comment.id}"`).firstElementChild
 
     const editedContent = {

@@ -1,11 +1,11 @@
-class LandmarkSerializer
+class UserSerializer
  
-    def initialize(landmark_object)
-      @landmark = landmark_object
+    def initialize(user_object)
+      @user = user_object
     end
 
     def to_serialized_json
-        @landmark.to_json(:include => {
+        @user.to_json(:include => {
         :comments => {:only => [:id, :description, :user_id]},
       }, :except => [:created_at, :updated_at])
     end

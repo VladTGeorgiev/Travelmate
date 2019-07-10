@@ -15,7 +15,6 @@ class CommentsController < ApplicationController
     end
 
     def create
-        city = Landmark.find_by(id: params[:id])
         comment = Comment.create(attr)
         render json: comment, only: [:description]
     end
@@ -36,7 +35,7 @@ class CommentsController < ApplicationController
     private
 
     def attr
-        params.require(:comment).permit(:landmark_id, :description)
+        params.require(:comment).permit(:landmark_id, :description, :user_id)
     end
 
 end
