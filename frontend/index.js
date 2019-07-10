@@ -1,6 +1,7 @@
 const citiesURL = "http://localhost:3000/cities"
 const cityBar = document.querySelector("#list-group")
 const landmarkCard = document.querySelector("#location-detail")
+const getMap = document.querySelector("#map")
 
 fetch (citiesURL)
     .then(response => response.json())
@@ -41,5 +42,29 @@ function showLandmarkCard(city) {
         landmarkName.dataset.lat = landmark.latitude
         landmarkName.dataset.lng = landmark.longitude
         landmarkCard.append(landmarkName)
+        landmarkName.addEventListener('click', changeContent)
     })
+}
+
+function changeContent(event) {
+
+    const landmarkLatitudeValue = event.target.dataset.lat
+    const landmarkLongitudeValue = event.target.dataset.lng
+
+    initMap(landmarkLatitudeValue, landmarkLongitudeValue)
+}
+
+function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
+
+    let latNum = parseFloat(landmarkLatitudeValue);
+    let lngNum = parseFloat(landmarkLongitudeValue);
+    console.log(latNum, lngNum)
+
+    let currentLandmark = {lat: latNum, lng: lngNum};
+
+    let map = new google.maps.Map(
+        document.getElementById('map'), {zoom: 13, center: currentLandmark}
+    )
+
+    let marker = new google.maps.Marker({position: currentLandmark, map: map});
 }
