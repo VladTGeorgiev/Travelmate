@@ -101,6 +101,7 @@ function showLandmarkCard(city) {
         landmarkName.dataset.id = landmark.id
         landmarkName.dataset.address = landmark.formatted_address
         landmarkName.dataset.rating = landmark.rating
+        landmarkName.dataset.name = landmark.name
         landmarkCard.append(landmarkName)
         landmarkName.addEventListener('click', changeContent)
     })
@@ -115,6 +116,7 @@ function changeContent(event) {
     const landmarkData = event.target.dataset.id
     const landmarkAddress = event.target.dataset.address
     const landmarkRatingValue = event.target.dataset.rating
+    const landmarkNameForMap = event.target.dataset.name
 
     const landmarkFormattedAddress = document.createElement("p")
     landmarkFormattedAddress.innerText = `Address: ${landmarkAddress}`
@@ -127,7 +129,7 @@ function changeContent(event) {
     
     landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2)
 
-    initMap(landmarkLatitudeValue, landmarkLongitudeValue)
+    initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap)
 
     createNewCommentForm(event, landmarkData)
     fetchComments(event)
@@ -172,10 +174,11 @@ function createComment(event, landmarkData) {
 
 };
 
-function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
+function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap) {
 
     let latNum = parseFloat(landmarkLatitudeValue);
     let lngNum = parseFloat(landmarkLongitudeValue);
+    let lmName = landmarkNameForMap
 
     let currentLandmark = {lat: latNum, lng: lngNum};
 
@@ -183,8 +186,13 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
         document.getElementById('map'), {zoom: 13, center: currentLandmark}
     )
 
+    let infowindow = new google.maps.InfoWindow({content: lmName});
 
     let marker = new google.maps.Marker({position: currentLandmark, map: map});
+
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
 
 
 }
