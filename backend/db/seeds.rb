@@ -27,7 +27,7 @@ data_hash.each do |everything|
             longitude: landmark['geometry']['location']['lng'],
             latitude: landmark['geometry']['location']['lat'],
             name: landmark['name'],
-            # photos: landmark['photos'][0]['html_attributions'][0],
+            photos: landmark['photos'],
             rating: landmark['rating'],
             types: landmark['types'],
             user_ratings_total: landmark['user_ratings_total']
@@ -36,20 +36,20 @@ data_hash.each do |everything|
     end
 end
 
-users = [
-    {username: "Vlad"},
-    {username: "Toby"},
-    {username: "Maija"},
-    {username: "Aaron"}
-]
+# users = [
+#     {username: "Vlad"},
+#     {username: "Toby"},
+#     {username: "Maija"},
+#     {username: "Aaron"}
+# ]
   
-users.each {|user| User.create(user)}
+# users.each {|user| User.create(user)}
 
-comments = [
-    {description: "Comment One", landmark_id: 1, user_id: 1 },
-    {description: "Comment Two", landmark_id: 2, user_id: 2 },
-    {description: "Comment Three", landmark_id: 1, user_id: 3 },
-    {description: "Comment Four", landmark_id: 3, user_id: 4 }
-  ]
+# comments = [
+#     {description: "Comment One", landmark_id: 1, user_id: 1 },
+#     {description: "Comment Two", landmark_id: 2, user_id: 2 },
+#     {description: "Comment Three", landmark_id: 1, user_id: 3 },
+#     {description: "Comment Four", landmark_id: 3, user_id: 4 }
+#   ]
   
-  comments.each {|comment| Comment.create(comment)}
+#   comments.each {|comment| Comment.create(comment)}

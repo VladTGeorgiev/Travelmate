@@ -24,7 +24,7 @@ body {
 
 .container {
     max-width: 960px;
-    /* margin: auto; */
+    margin: auto;
     overflow: hidden;
     padding: 0 3rem;
 }
@@ -80,9 +80,9 @@ body {
 .showcase .map-class {
     display: flex;
     flex-direction: column;
-    align-items: right;
+    align-items: center;
     justify-content: center;
-    float: right;
+    float: left;
 }
 
 .map-class {

@@ -11,6 +11,7 @@ const landmarkDetails = document.querySelector("#landmark-info")
 
 // const getMap = document.querySelector("#map2")
 const getMap = document.querySelector("#map")
+const getImage = document.querySelector("#image-area")
 
 const checkbox = document.querySelector("#checkbox")
 
@@ -89,6 +90,7 @@ function showLandmarkCard(city) {
     landmarkCard.innerHTML = " "
     landmarkDetails.innerHTML = " "
     getMap.innerHTML = " "
+    getImage.innerHTML = " "
     let landmark =' '
     
     Object.entries(city.landmarks).forEach(([key, value]) => {
@@ -102,6 +104,9 @@ function showLandmarkCard(city) {
         landmarkName.dataset.address = landmark.formatted_address
         landmarkName.dataset.rating = landmark.rating
         landmarkName.dataset.name = landmark.name
+        landmarkSplit = landmark.photos.split(" ")
+        landmarkSecondSplit = landmarkSplit.slice(4, 5)
+        landmarkName.dataset.photo = landmarkSecondSplit[0].slice(20, 210)
         landmarkCard.append(landmarkName)
         landmarkName.addEventListener('click', changeContent)
     })
@@ -110,7 +115,12 @@ function showLandmarkCard(city) {
 function changeContent(event) {
 
     landmarkDetails.innerHTML = " "
+    getImage.innerHTML = " "
 
+    const landmarkPicture = event.target.dataset.photo
+    const imageTest = document.createElement('img')
+    let URL = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&maxheight=400&photoreference=${landmarkPicture}&key=AIzaSyDPfNlNw9EPkqQUtnjTWqgZvhIkRJRKbPE`
+    imageTest.src = URL
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
     const landmarkData = event.target.dataset.id
@@ -128,7 +138,7 @@ function changeContent(event) {
     landmarkRating.innerText = `Rating: ${landmarkRatingValue} / 5`
     
     landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2)
-
+    getImage.append(imageTest)
     initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap)
 
     createNewCommentForm(event, landmarkData)
@@ -176,8 +186,11 @@ function createComment(event, landmarkData) {
 
 function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap) {
 
+    let URL = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CmRZAAAAl_v2oJkEPXbqGWsJQFlQJIWS9nHHvd1LoYKXaTbSf2PgslC7CSZInRoaFGnGYe10FIWxF-mcwWPeWDlb_v3WkzMVjcFZJco9Bh_bEeHL019mfJ6nlVNZSvEfSUQ1eKm-EhATpmO79nO47JKV_tX9B4TrGhSDwuC9yoAyLF1yaODkF8OkbV_XRQ&key=AIzaSyDPfNlNw9EPkqQUtnjTWqgZvhIkRJRKbPE'
+
     let latNum = parseFloat(landmarkLatitudeValue);
     let lngNum = parseFloat(landmarkLongitudeValue);
+
     let lmName = landmarkNameForMap
 
     let currentLandmark = {lat: latNum, lng: lngNum};
@@ -186,15 +199,13 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForM
         document.getElementById('map'), {zoom: 13, center: currentLandmark}
     )
 
-    let infowindow = new google.maps.InfoWindow({content: lmName});
+    let infowindow = new google.maps.InfoWindow({content: lmName, URL});
 
     let marker = new google.maps.Marker({position: currentLandmark, map: map});
 
     marker.addListener('click', function() {
         infowindow.open(map, marker);
     });
-
-
 }
 
 function fetchComments(event) {
