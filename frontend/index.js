@@ -2,10 +2,17 @@ const citiesURL = "http://localhost:3000/cities"
 const commentsURL = "http://localhost:3000/comments"
 const landmarksURL = "http://localhost:3000/landmarks"
 const usersURL = "http://localhost:3000/users"
-const cityBar = document.querySelector("#list-group")
-const landmarkCard = document.querySelector("#location-detail")
-const landmarkDetails = document.querySelector("#inner-details")
+
+const cityBar = document.querySelector("#city-list")
+const landmarkCard = document.querySelector("#landmark-name")
+
+// const landmarkDetails = document.querySelector("#inner-details")
+const landmarkDetails = document.querySelector("#landmark-info")
+
+// const getMap = document.querySelector("#map2")
 const getMap = document.querySelector("#map")
+
+const checkbox = document.querySelector("#checkbox")
 
 fetch (citiesURL)
     .then(response => response.json())
@@ -46,7 +53,6 @@ function createUser(event) {
     const newUserName = {
         "username": newUser.value,
     };
-// debugger
     fetch(usersURL, {
         method: "POST",
         body: JSON.stringify(newUserName),
@@ -78,15 +84,23 @@ function getSingleCity(id) {
 }
 
 function showLandmarkCard(city) {
+    checkbox.checked = false
+    console.log(checkbox.checked)
     landmarkCard.innerHTML = " "
+    landmarkDetails.innerHTML = " "
+    getMap.innerHTML = " "
     let landmark =' '
+    
     Object.entries(city.landmarks).forEach(([key, value]) => {
         landmark = value
         const landmarkName = document.createElement("li")
+        landmarkName.dataset.id = landmark.id
         landmarkName.innerText = landmark.name
         landmarkName.dataset.lat = landmark.latitude
         landmarkName.dataset.lng = landmark.longitude
         landmarkName.dataset.id = landmark.id
+        landmarkName.dataset.address = landmark.formatted_address
+        landmarkName.dataset.rating = landmark.rating
         landmarkCard.append(landmarkName)
         landmarkName.addEventListener('click', changeContent)
     })
@@ -99,6 +113,19 @@ function changeContent(event) {
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
     const landmarkData = event.target.dataset.id
+    const landmarkAddress = event.target.dataset.address
+    const landmarkRatingValue = event.target.dataset.rating
+
+    const landmarkFormattedAddress = document.createElement("p")
+    landmarkFormattedAddress.innerText = `Address: ${landmarkAddress}`
+
+    const spaceing = document.createElement("br")
+    const spaceing2 = document.createElement("br")
+
+    const landmarkRating = document.createElement("p")
+    landmarkRating.innerText = `Rating: ${landmarkRatingValue} / 5`
+    
+    landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2)
 
     initMap(landmarkLatitudeValue, landmarkLongitudeValue)
 
@@ -156,7 +183,10 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue) {
         document.getElementById('map'), {zoom: 13, center: currentLandmark}
     )
 
+
     let marker = new google.maps.Marker({position: currentLandmark, map: map});
+
+
 }
 
 function fetchComments(event) {
