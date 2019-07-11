@@ -12,21 +12,15 @@ const landmarkDetails = document.querySelector("#landmark-info")
 // const getMap = document.querySelector("#map2")
 const getMap = document.querySelector("#map")
 
+
 const checkbox = document.querySelector("#checkbox")
 
-fetch (citiesURL)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(city => {
-            showCitySideBar(city)
-    })
-})
 
 document.addEventListener("DOMContentLoaded", function () {
-    createUserButton()
+    User()
 });
 
-function createUserButton() {
+function User() {
     const userplace = document.querySelector('.user')
     const div = document.createElement("div")
     div.className = "new-user-div"
@@ -41,28 +35,73 @@ function createUserButton() {
     buttonCreate.innerText = "Create user"
     buttonCreate.addEventListener("click", event => createUser(event))
 
-    div.append(input, buttonCreate)
+    const buttonLogIn = document.createElement("button")
+    buttonLogIn.className = "btn btn-success"
+    buttonLogIn.innerText = "LogIn user"
+    buttonLogIn.addEventListener("click", event => logInUser(event))
+
+    div.append(input, buttonCreate, buttonLogIn)
     userplace.appendChild(div)
 
     return userplace
 };
 
+function logInUser(event) {
+    const user = document.querySelector('.new-user')
+
+    const userName = user.value;
+
+    fetch(usersURL)
+        .then(response => response.json())
+        .then(users => checkUser(users, userName))
+};
+
+function checkUser(users, userName) {
+    const userFound = users.find(user => user.username === userName);
+
+    if (userFound) {
+        fetchCities(userFound, citiesURL)
+    } else {
+        const div = document.querySelector('body')
+
+        const noUser = document.createElement('h1')
+        noUser.innerText = "Please enter valid credentials"
+
+        div.appendChild(noUser)
+        return div
+    }
+};
+
 function createUser(event) {
+  
     const newUser = document.querySelector('.new-user')
 
     const newUserName = {
         "username": newUser.value,
     };
+
     fetch(usersURL, {
         method: "POST",
         body: JSON.stringify(newUserName),
         headers: {
           "Content-Type": "application/json"
         }
-    }).then(resp => resp.json()).then(data => console.log(data))
+    }).then(resp => resp.json()
+    .then(data => fetchCities(data, citiesURL)))
+
 };
 
-function showCitySideBar(city) {
+function fetchCities(userFound, citiesURL) {
+
+    fetch(citiesURL)
+        .then(citiesData => citiesData.json())
+        .then(citiesDataResp => {
+            citiesDataResp.forEach(city => {
+                showCitySideBar(userFound, city)
+        })
+});
+
+function showCitySideBar(data, city) {
     const cityName = document.createElement("li")
     cityName.innerText = city.name
     cityName.dataset.id = city.id
@@ -213,6 +252,11 @@ function addComment(comment) {
 };
 
 function createCommentView(comment) {
+
+    // const user = 
+
+    // if user 
+
     const div = document.createElement("div")
     div.className = "comment-div"
     div.dataset.id = comment.id
@@ -267,4 +311,4 @@ function deleteComment(event, comment) {
 function removeDOMContent(response) {
     const domNode = document.querySelector(`div[data-id="${response.commentId}"`)
     domNode.remove();
-;}
+}};
