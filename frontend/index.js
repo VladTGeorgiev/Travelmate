@@ -51,11 +51,7 @@ function checkUser(users, userName) {
     const userFound = users.find(user => user.username === userName);
 
     if (userFound) {
-        const userId = userFound.id
-        console.log(userFound.id)
-        return fetch(usersURL + `/${userId}`)
-            .then(response => response.json())
-            .then(user => fetchCities(userFound, citiesURL))
+        fetchCities(userFound, citiesURL)
     } else {
         const div = document.querySelector('body')
 
@@ -86,12 +82,13 @@ function createUser(event) {
 
 };
 
-function fetchCities(data, citiesURL) {
+function fetchCities(userFound, citiesURL) {
+
     fetch(citiesURL)
         .then(citiesData => citiesData.json())
         .then(citiesDataResp => {
             citiesDataResp.forEach(city => {
-                showCitySideBar(data, city)
+                showCitySideBar(userFound, city)
         })
 });
 
