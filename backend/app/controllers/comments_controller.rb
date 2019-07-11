@@ -16,7 +16,7 @@ class CommentsController < ApplicationController
 
     def create
         comment = Comment.create(attr)
-        render json: comment, only: [:description]
+        render json: comment, only: [:description, :user_id, :landmark_id, :id]
     end
 
     def update

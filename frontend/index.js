@@ -5,9 +5,11 @@ const usersURL = "http://localhost:3000/users"
 
 const cityBar = document.querySelector("#city-list")
 const landmarkCard = document.querySelector("#landmark-name")
-
+const newComment = document.querySelector("#new-comment")
+const otherComments = document.querySelector("#other-comments")
 // const landmarkDetails = document.querySelector("#inner-details")
 const landmarkDetails = document.querySelector("#landmark-info")
+const landmarkNameField = document.querySelector(".landmark-name")
 
 // const getMap = document.querySelector("#map2")
 const getMap = document.querySelector("#map")
@@ -15,68 +17,122 @@ const getImage = document.querySelector("#image-area")
 
 const checkbox = document.querySelector("#checkbox")
 
-fetch (citiesURL)
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(city => {
-            showCitySideBar(city)
-    })
-})
-
 document.addEventListener("DOMContentLoaded", function () {
-    createUserButton()
+    User()
 });
 
-function createUserButton() {
-    const userplace = document.querySelector('.user')
+function User() {
+    const menu = document.querySelector(".menu-wrap")
+    menu.style.display = "none"
+
+    const userplace = document.querySelector('#log-in-form')
     const div = document.createElement("div")
     div.className = "new-user-div"
 
     const input = document.createElement("input")
-    input.placeholder = "Enter your user name here"
+    input.placeholder = "Username"
     input.className = "new-user"
     input.autofocus = true
 
     const buttonCreate = document.createElement("button")
     buttonCreate.className = "btn btn-success"
-    buttonCreate.innerText = "Create user"
+    buttonCreate.innerText = "Create new user"
     buttonCreate.addEventListener("click", event => createUser(event))
 
-    div.append(input, buttonCreate)
+    const buttonLogIn = document.createElement("button")
+    buttonLogIn.className = "btn btn-success"
+    buttonLogIn.innerText = "LogIn"
+    buttonLogIn.addEventListener("click", event => logInUser(event))
+
+    div.append(input, buttonCreate, buttonLogIn)
     userplace.appendChild(div)
 
     return userplace
 };
 
+function logInUser(event) {
+
+    const user = document.querySelector('.new-user')
+
+    const userName = user.value;
+
+    fetch(usersURL)
+        .then(response => response.json())
+        .then(users => checkUser(users, userName))
+};
+
+function checkUser(users, userName) {
+    const userFound = users.find(user => user.username === userName);
+        
+    if (userFound) {
+        const menu = document.querySelector(".menu-wrap")
+        menu.style.display = "block"
+        fetchCities(userFound, citiesURL)
+    } else {
+        window.alert("Please enter valid credentials");
+    };
+};
+
 function createUser(event) {
+
     const newUser = document.querySelector('.new-user')
 
     const newUserName = {
         "username": newUser.value,
     };
+
+    fetch(usersURL)
+        .then(response => response.json())
+        .then(users => checkUser(users, newUserName))
+
+    checkUser(users, newUserName)
+
     fetch(usersURL, {
         method: "POST",
         body: JSON.stringify(newUserName),
         headers: {
           "Content-Type": "application/json"
         }
-    }).then(resp => resp.json()).then(data => console.log(data))
+    }).then(resp => resp.json()
+    .then(data => fetchCities(data, citiesURL)))
+
 };
 
-function showCitySideBar(city) {
+function fetchCities(userFound, citiesURL) {
+
+    fetch(citiesURL)
+        .then(citiesData => citiesData.json())
+        .then(citiesDataResp => displayCities(citiesDataResp, userFound)
+)};
+
+function displayCities(citiesDataResp, userFound) {
+    const cityHeader = document.createElement("h2")
+    cityHeader.innerText = "Best cities in the world"
+    const br= document.createElement("br")
+    const hr = document.createElement("hr")
+    cityBar.append(cityHeader, hr, br)
+
+    citiesDataResp.map(city => {
+        showCitySideBar(city, userFound)
+    })
+};
+
+function showCitySideBar(city, userFound) {
+    const clear = document.querySelector(".container")
+    clear.innerHTML = ""
+
     const cityName = document.createElement("li")
     cityName.innerText = city.name
     cityName.dataset.id = city.id
     cityName.classList.add('list-group-item')
-
-    cityName.addEventListener('click', onCityClick)
-
+    cityName.addEventListener("click", event => onCityClick(event, userFound, city))
+    checkbox.checked = true
     cityBar.append(cityName)
 }
 
-function onCityClick(event) {
+function onCityClick(event, userFound, city) {
     getSingleCity(event.target.dataset.id)
-        .then(showLandmarkCard)
+        .then(city => showLandmarkCard(city, userFound))
 }
 
 function getSingleCity(id) {
@@ -84,15 +140,21 @@ function getSingleCity(id) {
         .then(response => response.json())
 }
 
-function showLandmarkCard(city) {
+function showLandmarkCard(city, userFound) {
+
     checkbox.checked = false
-    console.log(checkbox.checked)
     landmarkCard.innerHTML = " "
     landmarkDetails.innerHTML = " "
     getMap.innerHTML = " "
     getImage.innerHTML = " "
     let landmark =' '
-    
+
+    const landmarkHeader = document.createElement("h2")
+    landmarkHeader.innerText = `Top landmarks in ${city.name}`
+    const br= document.createElement("br")
+    const hr = document.createElement("hr")
+    landmarkCard.append(landmarkHeader, hr, br)
+
     Object.entries(city.landmarks).forEach(([key, value]) => {
         landmark = value
         const landmarkName = document.createElement("li")
@@ -108,26 +170,29 @@ function showLandmarkCard(city) {
         landmarkSecondSplit = landmarkSplit.slice(4, 5)
         landmarkName.dataset.photo = landmarkSecondSplit[0].slice(20, 210)
         landmarkCard.append(landmarkName)
-        landmarkName.addEventListener('click', changeContent)
+        landmarkName.addEventListener('click', event => changeContent(event, userFound))
     })
 }
 
-function changeContent(event) {
-
+function changeContent(event, userFound) {
+    newComment.innerHTML = ""
     landmarkDetails.innerHTML = " "
     getImage.innerHTML = " "
+    landmarkNameField.innerHTML = ""
 
     const landmarkPicture = event.target.dataset.photo
     const imageTest = document.createElement('img')
     let URL = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&maxheight=400&photoreference=${landmarkPicture}&key=AIzaSyDPfNlNw9EPkqQUtnjTWqgZvhIkRJRKbPE`
     imageTest.src = URL
+    const landmarkName = event.target.dataset.name
+
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
     const landmarkData = event.target.dataset.id
     const landmarkAddress = event.target.dataset.address
     const landmarkRatingValue = event.target.dataset.rating
     const landmarkNameForMap = event.target.dataset.name
-
+    const hr = document.createElement("hr")
     const landmarkFormattedAddress = document.createElement("p")
     landmarkFormattedAddress.innerText = `Address: ${landmarkAddress}`
 
@@ -137,16 +202,18 @@ function changeContent(event) {
     const landmarkRating = document.createElement("p")
     landmarkRating.innerText = `Rating: ${landmarkRatingValue} / 5`
     
+    landmarkNameField.append(landmarkName, hr)
+
     landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2)
     getImage.append(imageTest)
     initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap)
 
-    createNewCommentForm(event, landmarkData)
-    fetchComments(event)
+    createNewCommentForm(landmarkData, userFound, event)
+    fetchComments(event, userFound)
 
 };
 
-function createNewCommentForm(landmarkData) {
+function createNewCommentForm(landmarkData, userFound, event) {
     const div = document.createElement("div")
     div.className = "new-comment-div"
 
@@ -158,20 +225,20 @@ function createNewCommentForm(landmarkData) {
     const buttonCreate = document.createElement("button")
     buttonCreate.className = "btn btn-success"
     buttonCreate.innerText = "Create Comment"
-    buttonCreate.addEventListener("click", event => createComment(event, landmarkData))
+    buttonCreate.addEventListener("click", event => createComment(event, landmarkData, userFound))
 
-    landmarkDetails.append(textarea, buttonCreate)
+    newComment.append(textarea, buttonCreate)
 
-    return landmarkDetails
+    return newComment
 };
 
-function createComment(event, landmarkData) {
+function createComment(event, landmarkData, userFound) {
     const newComment = document.querySelector('.new-comment')
 
     const newContent = {
         "description": newComment.value,
-        // "user_id": ,
-        "landmark_id": landmarkData.target.dataset.id
+        "user_id": userFound.id,
+        "landmark_id": parseInt(landmarkData)
     };
 
     fetch(commentsURL, {
@@ -180,8 +247,37 @@ function createComment(event, landmarkData) {
         headers: {
           "Content-Type": "application/json"
         }
-    }).then(resp => resp.json()).then(newCommentData => addComment(newCommentData))
+    }).then(resp => resp.json()).then(newCommentData => createCommentViewSelf(newCommentData, userFound, landmarkData))
+};
 
+function createCommentViewSelf(comment, userFound, landmarkData) {
+
+    if (comment.user_id == userFound.id) {
+        newComment.innerHTML = ""
+
+        const div = document.createElement("div")
+        div.className = "comment-div"
+        div.dataset.id = comment.id
+
+        const textarea = document.createElement("textarea")
+        textarea.innerText = comment.description
+        textarea.id = comment.id
+
+        const buttonEdit = document.createElement("button")
+        buttonEdit.id = comment.id
+        buttonEdit.className = "btn btn-info"
+        buttonEdit.innerText = "Edit Comment"
+        buttonEdit.addEventListener("click", event => updateComment(event, comment, userFound))
+
+        const buttonDelete = document.createElement("button")
+        buttonDelete.id = comment.id
+        buttonDelete.className = "btn btn-danger"
+        buttonDelete.innerText = "Delete Comment"
+        buttonDelete.addEventListener("click", event => deleteComment(event, comment, userFound, landmarkData))
+
+        div.append(textarea, buttonEdit, buttonDelete)
+        newComment.appendChild(div)
+    }
 };
 
 function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap) {
@@ -208,54 +304,39 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForM
     });
 }
 
-function fetchComments(event) {
+function fetchComments(event, userFound) {
     fetch(`${landmarksURL}/${event.target.dataset.id}`)
         .then(landmarkData => landmarkData.json())
-        .then(landmark => displayComments(landmark, event))
+        .then(landmark => displayComments(landmark, event, userFound))
 };
 
-function displayComments(landmark, event) {
-    const commentsList = document.querySelector(".comment-body")
+function displayComments(landmark, event, userFound) {
 
+    const commentsList = document.querySelector("#other-comments")
     commentsList.innerHTML = ""
     const comments = landmark["comments"]
     comments.map(comment => {
-        addComment(comment)
+        createCommentView(comment, userFound)
     })
 };
 
-function addComment(comment) {
-    const commentsList = document.querySelector(".comment-body")
-    const div = createCommentView(comment)
-    commentsList.appendChild(div)
+function createCommentView(comment, userFound) {
+    if (comment.id !== userFound.id) {
+        const div = document.createElement("div")
+        div.className = "comment-div"
+        div.dataset.id = comment.id
 
-};
+        const p = document.createElement("p")
+        p.innerText = comment.description
+        p.id = comment.id
 
-function createCommentView(comment) {
-    const div = document.createElement("div")
-    div.className = "comment-div"
-    div.dataset.id = comment.id
+        const h3 = document.createElement("h3")
+        h3.innerText = comment.user_id
+        h3.id = comment.id
 
-    const textarea = document.createElement("textarea")
-    textarea.innerText = comment.description
-    textarea.id = comment.id
-
-    const buttonEdit = document.createElement("button")
-    buttonEdit.id = comment.id
-    buttonEdit.className = "btn btn-info"
-    buttonEdit.innerText = "Edit Comment"
-    buttonEdit.addEventListener("click", event => updateComment(event, comment))
-// debugger
-
-    const buttonDelete = document.createElement("button")
-    buttonDelete.id = comment.id
-    buttonDelete.className = "btn btn-danger"
-    buttonDelete.innerText = "Delete Comment"
-    buttonDelete.addEventListener("click", event => deleteComment(event, comment))
-
-    div.append(textarea, buttonEdit, buttonDelete)
-
-    return div
+        div.append(h3, p)
+        otherComments.appendChild(div)
+    }
 };
 
 function updateComment(event, comment) {
@@ -275,15 +356,16 @@ function updateComment(event, comment) {
     }).then(quote => quote.json())
 };
 
-function deleteComment(event, comment) {
+function deleteComment(event, comment, userFound) {
     return fetch(`${commentsURL}/${comment.id}`, {
         method: "DELETE"
       })
       .then(resp => resp.json())
-      .then(comment => removeDOMContent(comment));
+      .then(comment => removeDOMContent(comment, userFound));
   }
 
-function removeDOMContent(response) {
+function removeDOMContent(response, userFound, landmarkData) {
     const domNode = document.querySelector(`div[data-id="${response.commentId}"`)
     domNode.remove();
-;}
+    createNewCommentForm(landmarkData, userFound)
+};
