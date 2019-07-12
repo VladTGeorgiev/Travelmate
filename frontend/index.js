@@ -244,8 +244,27 @@ function changeContent(event, userFound) {
     const landmarkTotalRating = document.createElement("p")
     landmarkTotalRating.innerText = `Total number of ratings: ${landmarkTotalRatings}`
 
-    const landmarkTypeSection = document.createElement("p")
-    landmarkTypeSection.innerText = `Type of landmark: ${landmarkType}`
+    let landmarkTypeSection = document.createElement("p")
+    landmarkTypeSection.innerText = `Type of landmark: `
+
+
+    let sliceLandmarkType = landmarkType.replace(/[\[\]']+/g, '')
+    let removeQuotesFromLandmarkType = sliceLandmarkType.replace(/['"]+/g, '')
+    let removeUnderScoreFromLandmarkType = removeQuotesFromLandmarkType.replace(/[_]+/g, ' ')
+    let splitLandmarkType = removeUnderScoreFromLandmarkType.split(',')
+
+    
+    splitLandmarkType.forEach(function(splitLand) {
+        console.log(splitLand)
+        const landmarkTypeSplit = document.createElement('li')
+        landmarkTypeSplit.innerText = splitLand
+        landmarkTypeSection.append(landmarkTypeSplit)
+    })
+
+    
+
+ 
+    
     
     landmarkNameField.append(landmarkName, hr)
 
