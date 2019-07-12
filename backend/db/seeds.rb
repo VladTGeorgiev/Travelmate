@@ -38,18 +38,14 @@ end
 
 users = [
     {username: "Vlad"},
-    {username: "Toby"},
-    {username: "Maija"},
-    {username: "Aaron"}
+    {username: "Toby"}
 ]
   
 users.each {|user| User.create(user)}
 
 comments = [
-    {description: "Comment One", landmark_id: 1, user_id: 1, username: "Vlad" },
-    {description: "Comment Two", landmark_id: 2, user_id: 2, username: "Toby" },
-    {description: "Comment Three", landmark_id: 1, user_id: 3, username: "Maija" },
-    {description: "Comment Four", landmark_id: 3, user_id: 4, username: "Aaron" }
+    {description: "Never been there...", landmark_id: 1, user_id: 1, username: "Vlad" },
+    {description: "Incredible Views", landmark_id: 3, user_id: 2, username: "Toby" }
   ]
   
   comments.each {|comment| Comment.create(comment)}

@@ -7,11 +7,9 @@ const cityBar = document.querySelector("#city-list")
 const landmarkCard = document.querySelector("#landmark-name")
 const newComment = document.querySelector("#new-comment")
 const otherComments = document.querySelector("#other-comments")
-// const landmarkDetails = document.querySelector("#inner-details")
 const landmarkDetails = document.querySelector("#landmark-info")
 const landmarkNameField = document.querySelector(".landmark-name")
 
-// const getMap = document.querySelector("#map2")
 const getMap = document.querySelector("#map")
 const getImage = document.querySelector("#image-area")
 
@@ -107,16 +105,6 @@ function createUser(event) {
     fetch(usersURL)
         .then(response => response.json())
         .then(users => checkNewUser(users, newUserName))
-
-    // fetch(usersURL, {
-    //     method: "POST",
-    //     body: JSON.stringify(newUserName),
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     }
-    // }).then(resp => resp.json()
-    // .then(data => fetchCities(data, citiesURL)))
-
 };
 
 function fetchCities(userFound, citiesURL) {
@@ -204,7 +192,6 @@ function fetchComments(event, userFound) {
     const lId = parseInt(event.target.dataset.id)
     fetch(`${landmarksURL}/${lId}`)
         .then(data => data.json())
-        // .then (d => console.log(d))
         .then(landmark => displayComments(landmark, event, userFound))
 };
 
@@ -255,7 +242,6 @@ function changeContent(event, userFound) {
 
     
     splitLandmarkType.forEach(function(splitLand) {
-        console.log(splitLand)
         const landmarkTypeSplit = document.createElement('li')
         landmarkTypeSplit.innerText = splitLand
         landmarkTypeSection.append(landmarkTypeSplit)
@@ -364,7 +350,7 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForM
     let currentLandmark = {lat: latNum, lng: lngNum};
 
     let map = new google.maps.Map(
-        document.getElementById('map'), {zoom: 13, center: currentLandmark}
+        document.getElementById('map'), {zoom: 12, center: currentLandmark}
     )
 
     let infowindow = new google.maps.InfoWindow({content: lmName, URL});
@@ -381,7 +367,6 @@ function displayComments(landmark, event, userFound) {
     const commentsList = document.querySelector("#other-comments")
     commentsList.innerHTML = ""
     const comments = landmark["comments"]
-    // debugger
     comments.map(comment => {
         createCommentView(comment, userFound)
     })
