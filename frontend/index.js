@@ -268,13 +268,14 @@ function createNewCommentForm(landmarkData, userFound, event) {
     textarea.autofocus = true
 
     const moreSpaceing = document.createElement("br")
+    const moreSpaceing2 = document.createElement("br")
 
     const buttonCreate = document.createElement("button")
     buttonCreate.className = "btn btn-light"
     buttonCreate.innerText = "Create Comment"
     buttonCreate.addEventListener("click", event => createComment(event, landmarkData, userFound))
 
-    newComment.append(textarea, moreSpaceing ,buttonCreate)
+    newComment.append(textarea, moreSpaceing, moreSpaceing2,buttonCreate)
 
     return newComment
 };
@@ -309,6 +310,7 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
 
         const textarea = document.createElement("textarea")
         textarea.innerText = comment.description
+        textarea.autofocus = true
         textarea.id = comment.id
 
         const buttonEdit = document.createElement("button")
@@ -317,7 +319,8 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
         buttonEdit.innerText = "Edit Comment"
         buttonEdit.addEventListener("click", event => updateComment(event, comment, userFound, landmarkData))
 
-        const newSpace = document.createElement("br")
+        const moreSpaceing = document.createElement("br")
+        const moreSpaceing2 = document.createElement("br")
 
         const buttonDelete = document.createElement("button")
         buttonDelete.id = comment.id
@@ -325,7 +328,7 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
         buttonDelete.innerText = "Delete Comment"
         buttonDelete.addEventListener("click", event => deleteComment(event, comment, userFound, landmarkData))
 
-        div.append(textarea, newSpace, buttonEdit, buttonDelete)
+        div.append(textarea, moreSpaceing, moreSpaceing2,  buttonEdit, buttonDelete)
         newComment.appendChild(div)
     }
 };

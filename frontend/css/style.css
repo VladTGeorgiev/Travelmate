@@ -52,6 +52,15 @@ body {
     z-index: -1;
 }
 
+hr{
+    border: 0; border-top: 2px solid #fff;
+}
+
+button{
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
 .showcase .showcase-inner{
     display: flex;
     flex-direction: column;
