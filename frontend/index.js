@@ -66,13 +66,33 @@ function logInUser(event) {
 };
 
 function checkUser(users, userName) {
-    const userFound = users.find(users => users.username === userName);
+    const userFound = users.find(user => user.username === userName);
+
     if (userFound) {
         const menu = document.querySelector(".menu-wrap")
         menu.style.display = "block"
         fetchCities(userFound, citiesURL)
     } else {
         window.alert("Please enter valid credentials");
+    };
+};
+
+function checkNewUser(users, userName) {
+    const userFound = users.find(user => user.username === userName.username);
+
+    if (userFound) {
+        return window.alert("Please enter valid credentials");
+    } else {
+        fetch(usersURL, {
+            method: "POST",
+            body: JSON.stringify(userName),
+            headers: {
+              "Content-Type": "application/json"
+            }
+        }).then(resp => resp.json()
+        .then(data => fetchCities(data, citiesURL)))
+        const menu = document.querySelector(".menu-wrap")
+        menu.style.display = "block"
     };
 };
 
@@ -86,18 +106,16 @@ function createUser(event) {
 
     fetch(usersURL)
         .then(response => response.json())
-        .then(users => checkUser(users, newUserName))
+        .then(users => checkNewUser(users, newUserName))
 
-    checkUser(users, newUserName)
-
-    fetch(usersURL, {
-        method: "POST",
-        body: JSON.stringify(newUserName),
-        headers: {
-          "Content-Type": "application/json"
-        }
-    }).then(resp => resp.json()
-    .then(data => fetchCities(data, citiesURL)))
+    // fetch(usersURL, {
+    //     method: "POST",
+    //     body: JSON.stringify(newUserName),
+    //     headers: {
+    //       "Content-Type": "application/json"
+    //     }
+    // }).then(resp => resp.json()
+    // .then(data => fetchCities(data, citiesURL)))
 
 };
 
@@ -169,7 +187,8 @@ function showLandmarkCard(city, userFound) {
         landmarkName.dataset.id = landmark.id
         landmarkName.dataset.lng = landmark.longitude
         landmarkName.dataset.user_ratings_total = landmark.user_ratings_total
-        // landmark.dataset.type = landmark.types
+ 
+        landmarkName.dataset.types = landmark.types
         landmarkName.dataset.address = landmark.formatted_address
         landmarkName.dataset.rating = landmark.rating
         landmarkName.dataset.name = landmark.name
@@ -185,6 +204,7 @@ function fetchComments(event, userFound) {
     const lId = parseInt(event.target.dataset.id)
     fetch(`${landmarksURL}/${lId}`)
         .then(data => data.json())
+        // .then (d => console.log(d))
         .then(landmark => displayComments(landmark, event, userFound))
 };
 
@@ -205,7 +225,8 @@ function changeContent(event, userFound) {
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
     const landmarkTotalRatings = event.target.dataset.user_ratings_total
-    const landmarkType = event.target.dataset.type
+
+    const landmarkType = event.target.dataset.types
 
     const landmarkAddress = event.target.dataset.address
     const landmarkRatingValue = event.target.dataset.rating
@@ -224,11 +245,11 @@ function changeContent(event, userFound) {
     landmarkTotalRating.innerText = `Total number of ratings: ${landmarkTotalRatings}`
 
     const landmarkTypeSection = document.createElement("p")
-    landmarkTypeSection.innerText = `Total number of ratings: ${landmarkType}`
+    landmarkTypeSection.innerText = `Type of landmark: ${landmarkType}`
     
     landmarkNameField.append(landmarkName, hr)
 
-    landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2, landmarkTotalRating, landmarkType )
+    landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2, landmarkTotalRating, spaceing, landmarkTypeSection )
     getImage.append(imageTest)
     initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap)
 
@@ -338,12 +359,14 @@ function displayComments(landmark, event, userFound) {
     const commentsList = document.querySelector("#other-comments")
     commentsList.innerHTML = ""
     const comments = landmark["comments"]
+    // debugger
     comments.map(comment => {
         createCommentView(comment, userFound)
     })
 };
 
 function createCommentView(comment, userFound) {
+
     if (comment.id !== userFound.id) {
         const div = document.createElement("div")
         div.className = "comment-div"
@@ -354,7 +377,7 @@ function createCommentView(comment, userFound) {
         p.id = comment.id
 
         const h3 = document.createElement("h3")
-        h3.innerText = comment.user_id
+        h3.innerText = comment.username
         h3.id = comment.id
 
         div.append(h3, p)
