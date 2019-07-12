@@ -16,7 +16,7 @@ class CommentsController < ApplicationController
 
     def create
         comment = Comment.create(attr)
-        render json: comment, only: [:description, :user_id, :landmark_id, :id]
+        render json: comment, only: [:description, :user_id, :landmark_id, :id, :username]
     end
 
     def update
@@ -35,7 +35,7 @@ class CommentsController < ApplicationController
     private
 
     def attr
-        params.require(:comment).permit(:landmark_id, :description, :user_id)
+        params.require(:comment).permit(:landmark_id, :description, :user_id, :username)
     end
 
 end

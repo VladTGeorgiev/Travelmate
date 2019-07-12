@@ -161,8 +161,10 @@ function showLandmarkCard(city, userFound) {
         landmarkName.dataset.id = landmark.id
         landmarkName.innerText = landmark.name
         landmarkName.dataset.lat = landmark.latitude
-        landmarkName.dataset.lng = landmark.longitude
         landmarkName.dataset.id = landmark.id
+        landmarkName.dataset.lng = landmark.longitude
+        landmarkName.dataset.user_ratings_total = landmark.user_ratings_total
+        // landmark.dataset.type = landmark.types
         landmarkName.dataset.address = landmark.formatted_address
         landmarkName.dataset.rating = landmark.rating
         landmarkName.dataset.name = landmark.name
@@ -174,11 +176,20 @@ function showLandmarkCard(city, userFound) {
     })
 }
 
+function fetchComments(event, userFound) {
+    const lId = parseInt(event.target.dataset.id)
+    fetch(`${landmarksURL}/${lId}`)
+        .then(data => data.json())
+        .then(landmark => displayComments(landmark, event, userFound))
+};
+
 function changeContent(event, userFound) {
     newComment.innerHTML = ""
     landmarkDetails.innerHTML = " "
     getImage.innerHTML = " "
     landmarkNameField.innerHTML = ""
+
+    const landmarkData = event.target.dataset.id
 
     const landmarkPicture = event.target.dataset.photo
     const imageTest = document.createElement('img')
@@ -188,7 +199,9 @@ function changeContent(event, userFound) {
 
     const landmarkLatitudeValue = event.target.dataset.lat
     const landmarkLongitudeValue = event.target.dataset.lng
-    const landmarkData = event.target.dataset.id
+    const landmarkTotalRatings = event.target.dataset.user_ratings_total
+    const landmarkType = event.target.dataset.type
+
     const landmarkAddress = event.target.dataset.address
     const landmarkRatingValue = event.target.dataset.rating
     const landmarkNameForMap = event.target.dataset.name
@@ -201,10 +214,16 @@ function changeContent(event, userFound) {
 
     const landmarkRating = document.createElement("p")
     landmarkRating.innerText = `Rating: ${landmarkRatingValue} / 5`
+
+    const landmarkTotalRating = document.createElement("p")
+    landmarkTotalRating.innerText = `Total number of ratings: ${landmarkTotalRatings}`
+
+    const landmarkTypeSection = document.createElement("p")
+    landmarkTypeSection.innerText = `Total number of ratings: ${landmarkType}`
     
     landmarkNameField.append(landmarkName, hr)
 
-    landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2)
+    landmarkDetails.append(landmarkFormattedAddress, spaceing, landmarkRating, spaceing2, landmarkTotalRating, landmarkType )
     getImage.append(imageTest)
     initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForMap)
 
@@ -238,7 +257,8 @@ function createComment(event, landmarkData, userFound) {
     const newContent = {
         "description": newComment.value,
         "user_id": userFound.id,
-        "landmark_id": parseInt(landmarkData)
+        "landmark_id": parseInt(landmarkData),
+        "username": userFound.username
     };
 
     fetch(commentsURL, {
@@ -267,7 +287,7 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
         buttonEdit.id = comment.id
         buttonEdit.className = "btn btn-info"
         buttonEdit.innerText = "Edit Comment"
-        buttonEdit.addEventListener("click", event => updateComment(event, comment, userFound))
+        buttonEdit.addEventListener("click", event => updateComment(event, comment, userFound, landmarkData))
 
         const buttonDelete = document.createElement("button")
         buttonDelete.id = comment.id
@@ -303,12 +323,6 @@ function initMap(landmarkLatitudeValue, landmarkLongitudeValue, landmarkNameForM
         infowindow.open(map, marker);
     });
 }
-
-function fetchComments(event, userFound) {
-    fetch(`${landmarksURL}/${event.target.dataset.id}`)
-        .then(landmarkData => landmarkData.json())
-        .then(landmark => displayComments(landmark, event, userFound))
-};
 
 function displayComments(landmark, event, userFound) {
 
