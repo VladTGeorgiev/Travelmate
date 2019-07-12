@@ -24,10 +24,10 @@ data_hash.each do |everything|
             Landmark.create(            
             city_id: city['id'],
             formatted_address: landmark['formatted_address'],
-            longitude: landmark['geometry']['location']['lat'],
-            latitude: landmark['geometry']['location']['lng'],
+            longitude: landmark['geometry']['location']['lng'],
+            latitude: landmark['geometry']['location']['lat'],
             name: landmark['name'],
-            # photos: landmark['photos'][0]['html_attributions'],
+            photos: landmark['photos'],
             rating: landmark['rating'],
             types: landmark['types'],
             user_ratings_total: landmark['user_ratings_total']
@@ -35,3 +35,17 @@ data_hash.each do |everything|
         end
     end
 end
+
+users = [
+    {username: "Vlad"},
+    {username: "Toby"}
+]
+  
+users.each {|user| User.create(user)}
+
+comments = [
+    {description: "Never been there...", landmark_id: 1, user_id: 1, username: "Vlad" },
+    {description: "Incredible Views", landmark_id: 3, user_id: 2, username: "Toby" }
+  ]
+  
+  comments.each {|comment| Comment.create(comment)}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_09_183406) do
+ActiveRecord::Schema.define(version: 2019_07_12_083247) do
 
   create_table "cities", force: :cascade do |t|
     t.string "name"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 2019_07_09_183406) do
     t.integer "landmark_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.string "username"
     t.index ["landmark_id"], name: "index_comments_on_landmark_id"
   end
 
@@ -39,6 +41,12 @@ ActiveRecord::Schema.define(version: 2019_07_09_183406) do
     t.datetime "updated_at", null: false
     t.string "types"
     t.index ["city_id"], name: "index_landmarks_on_city_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
