@@ -35,16 +35,20 @@ function User() {
     input.autofocus = true
 
     const buttonCreate = document.createElement("button")
-    buttonCreate.className = "btn btn-success"
+    buttonCreate.className = "btn btn-light"
     buttonCreate.innerText = "Create new user"
     buttonCreate.addEventListener("click", event => createUser(event))
 
     const buttonLogIn = document.createElement("button")
-    buttonLogIn.className = "btn btn-success"
+    buttonLogIn.className = "btn btn-light"
     buttonLogIn.innerText = "LogIn"
     buttonLogIn.addEventListener("click", event => logInUser(event))
 
-    div.append(input, buttonCreate, buttonLogIn)
+    const space = document.createElement('br')
+    const space2 = document.createElement('br')
+    const space3 = document.createElement('p')
+
+    div.append(input, space, space2, buttonCreate, space3,buttonLogIn)
     userplace.appendChild(div)
 
     return userplace
@@ -62,8 +66,7 @@ function logInUser(event) {
 };
 
 function checkUser(users, userName) {
-    const userFound = users.find(user => user.username === userName);
-        
+    const userFound = users.find(users => users.username === userName);
     if (userFound) {
         const menu = document.querySelector(".menu-wrap")
         menu.style.display = "block"
@@ -124,7 +127,7 @@ function showCitySideBar(city, userFound) {
     const cityName = document.createElement("li")
     cityName.innerText = city.name
     cityName.dataset.id = city.id
-    cityName.classList.add('list-group-item')
+    cityName.classList.add('list-group-item-light' + 'list-group-item-action')
     cityName.addEventListener("click", event => onCityClick(event, userFound, city))
     checkbox.checked = true
     cityBar.append(cityName)
@@ -147,6 +150,8 @@ function showLandmarkCard(city, userFound) {
     landmarkDetails.innerHTML = " "
     getMap.innerHTML = " "
     getImage.innerHTML = " "
+    newComment.innerHTML = " "
+    otherComments.innerHTML = " "
     let landmark =' '
 
     const landmarkHeader = document.createElement("h2")
@@ -241,12 +246,14 @@ function createNewCommentForm(landmarkData, userFound, event) {
     textarea.className = "new-comment"
     textarea.autofocus = true
 
+    const moreSpaceing = document.createElement("br")
+
     const buttonCreate = document.createElement("button")
-    buttonCreate.className = "btn btn-success"
+    buttonCreate.className = "btn btn-light"
     buttonCreate.innerText = "Create Comment"
     buttonCreate.addEventListener("click", event => createComment(event, landmarkData, userFound))
 
-    newComment.append(textarea, buttonCreate)
+    newComment.append(textarea, moreSpaceing ,buttonCreate)
 
     return newComment
 };
@@ -285,9 +292,11 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
 
         const buttonEdit = document.createElement("button")
         buttonEdit.id = comment.id
-        buttonEdit.className = "btn btn-info"
+        buttonEdit.className = "btn btn-light"
         buttonEdit.innerText = "Edit Comment"
         buttonEdit.addEventListener("click", event => updateComment(event, comment, userFound, landmarkData))
+
+        const newSpace = document.createElement("br")
 
         const buttonDelete = document.createElement("button")
         buttonDelete.id = comment.id
@@ -295,7 +304,7 @@ function createCommentViewSelf(comment, userFound, landmarkData) {
         buttonDelete.innerText = "Delete Comment"
         buttonDelete.addEventListener("click", event => deleteComment(event, comment, userFound, landmarkData))
 
-        div.append(textarea, buttonEdit, buttonDelete)
+        div.append(textarea, newSpace, buttonEdit, buttonDelete)
         newComment.appendChild(div)
     }
 };
